@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+
+from tweets.models import Tweet
 
 
 def home_view(request):
@@ -6,4 +8,9 @@ def home_view(request):
 
 
 def tweet_detail_view(request, tweet_id):
-    return HttpResponse(f"<h1>Hello {tweet_id}</h1>")
+    try:
+        obj = Tweet.objects.get(id=tweet_id)
+    except Tweet.DoesNotExist:
+        raise Http404
+    return HttpResponse(f"<h1>Hello {tweet_id} - {obj.content}</h1>")
+`
