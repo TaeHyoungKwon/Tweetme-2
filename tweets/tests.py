@@ -14,11 +14,27 @@ class TestTweetView(TestCase):
 
     def test_tweet_detail_view_should_raise_404_when_given_tweet_id_is_not_exist(self):
         Tweet.objects.create(content="TweetMe")
-        not_exist_tweet_id = "not_exist_tweet_id"
+        not_exist_tweet_id = "12345"
         response = self.c.get("/tweets/" + not_exist_tweet_id)
         self.assertEqual(response.status_code, 404)
 
-    def test_tweet_detail_view_should_return_hello_string_with_tweet_id_and_obj_content(self):
+    def test_tweet_detail_view_should_have_message_string_is_not_found_when_given_tweet_id_is_not_exist(self):
+        Tweet.objects.create(content="TweetMe")
+        not_exist_tweet_id = "12345"
+        response = self.c.get("/tweets/" + not_exist_tweet_id)
+        response = response.json()
+        self.assertEqual(response["message"], "Not found")
+
+    def test_tweet_detail_view_should_return_200_when_tweet_instance_is_exist(self):
         tweet_instance = Tweet.objects.create(content="TweetMe")
         response = self.c.get("/tweets/" + str(tweet_instance.pk))
-        self.assertEqual(response.content.decode("ascii"), "<h1>Hello 1 - TweetMe</h1>")
+        response = response.json()
+        self.assertEqual(response["id"], 1)
+        self.assertEqual(response["content"], "TweetMe")
+
+    def test_tweet_detail_view_should_return_tweet_id_and_content_when_tweet_instance_is_exist(self):
+        tweet_instance = Tweet.objects.create(content="TweetMe")
+        response = self.c.get("/tweets/" + str(tweet_instance.pk))
+        response = response.json()
+        self.assertEqual(response["id"], 1)
+        self.assertEqual(response["content"], "TweetMe")
