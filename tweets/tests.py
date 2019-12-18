@@ -23,18 +23,18 @@ class TestTweetView(TestCase):
         not_exist_tweet_id = "12345"
         response = self.c.get("/tweets/" + not_exist_tweet_id)
         response = response.json()
-        self.assertEqual(response['message'], 'Not found')
+        self.assertEqual(response["message"], "Not found")
 
     def test_tweet_detail_view_should_return_200_when_tweet_instance_is_exist(self):
         tweet_instance = Tweet.objects.create(content="TweetMe")
         response = self.c.get("/tweets/" + str(tweet_instance.pk))
         response = response.json()
-        self.assertEqual(response['id'], 1)
-        self.assertEqual(response['content'], 'TweetMe')
+        self.assertEqual(response["id"], 1)
+        self.assertEqual(response["content"], "TweetMe")
 
     def test_tweet_detail_view_should_return_tweet_id_and_content_when_tweet_instance_is_exist(self):
         tweet_instance = Tweet.objects.create(content="TweetMe")
         response = self.c.get("/tweets/" + str(tweet_instance.pk))
         response = response.json()
-        self.assertEqual(response['id'], 1)
-        self.assertEqual(response['content'], 'TweetMe')
+        self.assertEqual(response["id"], 1)
+        self.assertEqual(response["content"], "TweetMe")
