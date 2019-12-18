@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 
 from tweets.models import Tweet
 
@@ -8,9 +8,12 @@ def home_view(request):
 
 
 def tweet_detail_view(request, tweet_id):
+    data = {"id": tweet_id}
+    status = 200
     try:
         obj = Tweet.objects.get(id=tweet_id)
+        data["content"] = obj.content
     except Tweet.DoesNotExist:
-        raise Http404
-    return HttpResponse(f"<h1>Hello {tweet_id} - {obj.content}</h1>")
-`
+        data["message"] = "Not found"
+        status = 404
+    return JsonResponse(data, status=status)
