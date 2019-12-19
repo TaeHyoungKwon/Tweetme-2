@@ -34,3 +34,10 @@ class TestTweetView(TestCase):
         response = response.json()
         self.assertEqual(response["id"], 1)
         self.assertEqual(response["content"], "TweetMe")
+
+    def test_tweet_list_view_should_return_200(self):
+        Tweet.objects.create(content="TweetMe")
+        response = self.c.get("/tweets/")
+        json_data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json_data["response"][0]["content"], "TweetMe")
