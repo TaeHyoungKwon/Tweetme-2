@@ -8,10 +8,6 @@ class TestTweetView(TestCase):
     def setUp(self):
         self.c = Client()
 
-    def test_home_view_should_return_hello_world_text(self):
-        response = self.c.get("/")
-        self.assertEqual(response.content.decode("ascii"), "<h1>Hello World</h1>")
-
     def test_tweet_detail_view_should_raise_404_when_given_tweet_id_is_not_exist(self):
         Tweet.objects.create(content="TweetMe")
         not_exist_tweet_id = "12345"
