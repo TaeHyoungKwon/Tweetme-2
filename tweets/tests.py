@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 
 from tweets.models import Tweet
-from tweets.views import home_view
 
 
 class TestTweetView(TestCase):
@@ -41,3 +40,11 @@ class TestTweetView(TestCase):
         json_data = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json_data["response"][0]["content"], "TweetMe")
+
+    def test_tweet_list_should_return_likes_0_to_122(self):
+        Tweet.objects.create(content="TweetMe")
+        response = self.c.get("/tweets/")
+        json_data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertLessEqual(json_data["response"][0]["likes"], 122)
+        self.assertGreaterEqual(json_data["response"][0]["likes"], 0)
