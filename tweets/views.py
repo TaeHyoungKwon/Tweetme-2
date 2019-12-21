@@ -2,7 +2,9 @@ import random
 
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.utils.http import is_safe_url
 
+from settings import ALLOWED_HOSTS
 from tweets.forms import TweetForm
 from tweets.models import Tweet
 
@@ -29,7 +31,7 @@ def tweet_create_view(request):
     if form.is_valid():
         obj = form.save(commit=False)
         obj.save()
-        if next_url:
+        if next_url and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = TweetForm()
     return render(request, "components/form.html", context={"form": form})
