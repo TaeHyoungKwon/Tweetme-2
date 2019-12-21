@@ -48,3 +48,11 @@ class TestTweetView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertLessEqual(json_data["response"][0]["likes"], 122)
         self.assertGreaterEqual(json_data["response"][0]["likes"], 0)
+
+    def test_tweet_create_view_should_return_rendered_page_when_request_method_is_not_POST(self):
+        Tweet.objects.create(content="TweetMe")
+        response = self.c.get("/tweets/")
+        json_data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertLessEqual(json_data["response"][0]["likes"], 122)
+        self.assertGreaterEqual(json_data["response"][0]["likes"], 0)
