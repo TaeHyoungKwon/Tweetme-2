@@ -49,10 +49,23 @@ class TestTweetView(TestCase):
         self.assertLessEqual(json_data["response"][0]["likes"], 122)
         self.assertGreaterEqual(json_data["response"][0]["likes"], 0)
 
-    def test_tweet_create_view_should_return_rendered_page_when_request_method_is_not_POST(self):
+    def test_tweet_create_view_should_return_200_when_request_method_is_not_POST(self):
         Tweet.objects.create(content="TweetMe")
-        response = self.c.get("/tweets/")
-        json_data = response.json()
+        response = self.c.get("/create-tweet/")
         self.assertEqual(response.status_code, 200)
-        self.assertLessEqual(json_data["response"][0]["likes"], 122)
-        self.assertGreaterEqual(json_data["response"][0]["likes"], 0)
+
+
+    def test_tweet_create_view_should_redirect_when_next_url_is_exist(self):
+        Tweet.objects.create(content="TweetMe")
+        next_url = '/'
+        response = self.c.post("/create-tweet/", data={
+            'next': '/',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, next_url)
+
+    def test_tweet_create_view_should_return_200(self):
+        Tweet.objects.create(content="TweetMe")
+        response = self.c.post("/create-tweet/", data={
+        })
+        self.assertEqual(response.status_code, 200)
