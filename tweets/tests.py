@@ -49,34 +49,9 @@ class TestTweetView(TestCase):
         self.assertLessEqual(json_data["response"][0]["likes"], MAX_LIKES_COUNT)
         self.assertGreaterEqual(json_data["response"][0]["likes"], MIN_LIKES_COUNT)
 
-    def test_tweet_create_view_should_return_200_when_request_method_is_not_POST(self):
-        response = self.c.get("/create-tweet/")
-        self.assertEqual(response.status_code, 200)
-
-    def test_tweet_create_view_should_redirect_when_next_url_is_exist(self):
-        next_url = "/"
-        response = self.c.post("/create-tweet/", data={"next": "/"})
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, next_url)
-
-    def test_tweet_create_view_should_return_200(self):
-        response = self.c.post("/create-tweet/", data={})
-        self.assertEqual(response.status_code, 200)
-
     def test_tweet_create_view_should_be_201_when_given_request_is_ajax(self):
         response = self.c.post("/create-tweet/", HTTP_X_REQUESTED_WITH="XMLHttpRequest", data={"next": "/"})
         self.assertEqual(response.status_code, 201)
-
-    def test_tweet_create_view_should_return_serialized_json_when_given_request_is_ajax(self):
-        content = "KwonTaeHyoung"
-        response = self.c.post(
-            "/create-tweet/", HTTP_X_REQUESTED_WITH="XMLHttpRequest", data={"next": "/", "content": content}
-        )
-        res = response.json()
-        self.assertEqual(res["id"], 2)
-        self.assertEqual(res["content"], content)
-        self.assertLessEqual(res["likes"], MAX_LIKES_COUNT)
-        self.assertGreaterEqual(res["likes"], MIN_LIKES_COUNT)
 
     def test_tweet_create_view_should_return_400_when_given_request_is_ajax(self):
         too_long_content = "KwonTaeHyoung" * 1000
