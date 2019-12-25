@@ -83,3 +83,12 @@ class TestTweetView(TestCase):
         self.assertEqual(res["content"], content)
         self.assertLessEqual(res["likes"], MAX_LIKES_COUNT)
         self.assertGreaterEqual(res["likes"], MIN_LIKES_COUNT)
+
+    def test_tweet_create_view_should_return_400_when_given_request_is_ajax(self):
+        too_long_content = "KwonTaeHyoung" * 1000
+        response = self.c.post(
+            "/create-tweet/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            data={"next": "/", "content": too_long_content},
+        )
+        self.assertEqual(response.status_code, 400)
