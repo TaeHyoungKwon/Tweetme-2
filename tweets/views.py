@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.http import is_safe_url
 
-from settings import ALLOWED_HOSTS
+from tweetme2.settings import ALLOWED_HOSTS
 from tweets.forms import TweetForm
 from tweets.models import Tweet
 
