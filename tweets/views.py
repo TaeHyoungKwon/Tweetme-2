@@ -1,5 +1,6 @@
 import random
 
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.http import is_safe_url
@@ -26,10 +27,12 @@ def tweet_detail_view(request, tweet_id):
 
 
 def tweet_create_view(request):
+    user = User.objects.all()[0]
     form = TweetForm(request.POST or None)
     next_url = request.POST.get("next") or None
     if form.is_valid():
         obj = form.save(commit=False)
+        obj.user = user
         obj.save()
         if request.is_ajax():
             return JsonResponse(obj.serialize(), status=201)
