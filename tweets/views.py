@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.http import is_safe_url
 
+from serializers import TweetSerializer
 from tweetme2.settings import ALLOWED_HOSTS
 from tweets.forms import TweetForm
 from tweets.models import Tweet
@@ -27,22 +28,12 @@ def tweet_detail_view(request, tweet_id):
 
 
 def tweet_create_view(request):
+    serializer = TweetSerializer(data=request.POST or None)
     user = User.objects.all()[0]
-    form = TweetForm(request.POST or None)
-    next_url = request.POST.get("next") or None
-    if form.is_valid():
-        obj = form.save(commit=False)
-        obj.user = user
-        obj.save()
-        if request.is_ajax():
-            return JsonResponse(obj.serialize(), status=201)
-        if next_url and is_safe_url(next_url, ALLOWED_HOSTS):
-            return redirect(next_url)
-        form = TweetForm()
-    if form.errors:
-        if request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-    return render(request, "components/form.html", context={"form": form})
+    if serializer.is_valid():
+        serializer.save(user=user)
+        return JsonResponse(serializer.data, status=201)
+    return JsonResponse({}, status=400)
 
 
 def tweet_list_view(request):
